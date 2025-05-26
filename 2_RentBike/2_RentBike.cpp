@@ -1,4 +1,8 @@
-﻿#include <iostream>
+﻿/*2_RentBike.cpp
+자전거 대여 시스템의 메인 실행 파일
+컨트롤 클래스와 UI 클래스들을 사용하여 사용자 요청을 처리
+*/
+#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -17,21 +21,15 @@
 #include "RentBikeUI.h"
 #include "RentalList.h"
 #include "RentalListUI.h"
+#include "Exit.h"
+#include "ExitUI.h"
 
 #define INPUT_FILE_NAME "input.txt"
 #define OUTPUT_FILE_NAME "output.txt"
 
-std::ifstream in_fp;
-std::ofstream out_fp;
 
-// 상태 객체들
-UserCollection users;
-BikeCollection bikes;
 
-// 현재 로그인된 사용자
-User* currentUser = nullptr;
-
-// 작업 처리 함수
+// 메뉴 파싱
 void doTask(std::ifstream& in_fp, std::ofstream& out_fp, UserCollection& users, BikeCollection& bikes, User*& currentUser) {
     int menu1 = 0, menu2 = 0;
 
@@ -109,15 +107,15 @@ void doTask(std::ifstream& in_fp, std::ofstream& out_fp, UserCollection& users, 
             }
             break;
 
-        case 6:  // 종료
-            if (menu2 == 1) {
-                out_fp << "6.1. 종료\n";
+        case 6:  // 프로그램 종료
+            switch (menu2) {
+            case 1: {
+                Exit exitCtrl;
+                ExitUI exitUI;
+                exitUI.requestExit(out_fp, exitCtrl, users, bikes);
                 return;
             }
-            break;
-
-        default:
-            // 잘못된 메뉴 입력 시 무시
+            }
             break;
         }
     }
@@ -125,6 +123,7 @@ void doTask(std::ifstream& in_fp, std::ofstream& out_fp, UserCollection& users, 
 
 // main 함수
 int main() {
+
     std::ifstream in_fp(INPUT_FILE_NAME);
     if (!in_fp) {
         std::cerr << "입력 파일 열기 실패\n";
